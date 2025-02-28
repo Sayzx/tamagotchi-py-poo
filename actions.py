@@ -101,3 +101,33 @@ class ActionManager:
             print("La créature est soignée.\n +25 de santé")
             creature.heal = min(100, creature.heal + 25)
             print("────────────────────────")
+        
+    def check_value(self, creature, attribut):
+        """Check if the value of the attribute is too high or too low."""
+        if getattr(creature, attribut) > 100:
+            setattr(creature, attribut, 100)
+        elif getattr(creature, attribut) < 0:
+            setattr(creature, attribut, 0)
+        print("Value checked.")
+        
+
+    def givestats(self, creature):
+        """Modify a specific attribute of the creature."""
+        print("────────────────────────")
+        print(creature.status())
+        print("────────────────────────")
+
+        valid_attributes = ["heal", "hungry", "energy", "happy"]
+        attribut = input("Choose an attribute to modify (heal, hungry, energy, happy): ")
+
+        while attribut not in valid_attributes:
+            print("Invalid attribute. Try again.")
+            attribut = input("Choose an attribute to modify (heal, hungry, energy, happy): ")
+
+        try:
+            new_value = int(input("New value: "))
+            setattr(creature, attribut, new_value)
+            self.check_value(creature, attribut)
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+        

@@ -1,10 +1,9 @@
-from creature import Creature
+from creature import Creature, create_crature
 from actions import ActionManager
 from events import EventManager
 from storage import Storage
 from ui.display import show_creature_ascii
-from creature import create_crature
-
+import random
 
 class Game:
     def __init__(self):
@@ -14,86 +13,61 @@ class Game:
         self.event_manager = EventManager()
     
     def create_creature(self):
-        name = input("Entrez le nom de votre créature : ")
-        while name.isdigit() or len(name) < 3 or len(name) > 12:
-            print("Nom invalide. Réessayez. [Dois contenir entre 3 et 12 caractères et ne doit pas être un chiffre]")
-            name = input("Entrez le nom de votre créature : ")
+        while True:
+            name = input("Enter your creature's name: ")
+            if not name.isdigit() and 3 <= len(name) <= 12:
+                break
+            print("Invalid name. Must be 3-12 characters and not a number.")
         
-        creature_type = input("Choisissez le type (chaton,chiot,dragon,poisson,rhino,singe) : ")
-        while creature_type not in ["chaton", "chiot", "dragon", "poisson", "rhino", "singe"]:
-            print("Type de créature Invalide. Réessayez.")
-            creature_type = input("Choisissez le type (chaton,chiot,dragon,poisson,rhino,singe) : ")
-            
-        self.creature = create_crature(name, creature_type)  
+        valid_types = ["chaton", "chiot", "dragon", "poisson", "rhino", "singe"]
+        while (creature_type := input("Choose a type (chaton, chiot, dragon, poisson, rhino, singe): ")) not in valid_types:
+            print("Invalid creature type. Try again.")
+        
+        self.creature = create_crature(name, creature_type)
+    
     def load_creature(self, data):
+        """Loads a creature from saved data."""
         self.creature = Creature(data["name"], data["type"])
-        self.creature.hungry = data["hungry"]
-        self.creature.energy = data["energy"]
-        self.creature.happy = data["happy"]
-        self.creature.heal = data["heal"]
-        self.creature.age = data["age"]
-        self.creature.lvl = data["lvl"]
+        for attr in ["hungry", "energy", "happy", "heal", "age", "lvl"]:
+            setattr(self.creature, attr, data[attr])
     
     def run(self):
-        print("────────────────────────")
-        print("Bienvenue dans le Simulateur de créature virtuelle !")
-        print("Vous allez devoir vous occuper d'une créature virtuelle.")
-        print("────────────────────────")
-        saved_data = self.storage.load()
-        if saved_data:
-            use_save = input("Une sauvegarde existe. Voulez-vous la charger ? (o/n) : ")
-            if use_save.lower() == "o":
-                self.load_creature(saved_data)
-                print("Sauvegarde chargée.")
-            else:
-                self.create_creature()
+        """Main game loop."""
+        print("\nWelcome to the Virtual Creature Simulator!\nTake care of your virtual pet.")
+        if (saved_data := self.storage.load()) and input("Save found. Load it? (y/n): ").lower() == "y":
+            self.load_creature(saved_data)
+            print("Save loaded.")
         else:
             self.create_creature()
         
         while True:
-            print("\nEtat de la créature:")
-            print(self.creature.status())
+            print(f"\n{self.creature.status()}")
             
-            if self.creature.heal >= -40:
-                self.creature.vieillir()
-            elif self.creature.heal <= 0:
-                self.creature.death("Santé trop faible.")
-                break
-            elif self.creature.hungry <= 0:
-                self.creature.death("Faim trop faible.")
-                break
-            elif self.creature.happy <= 0:
-                self.creature.death("Suicide")
-            elif self.creature.energy <= 0:
+            if self.creature.heal <= 0:
+                self.creature.death("Health too low."); break
+            if self.creature.hungry <= 0:
+                self.creature.death("Starved."); break
+            if self.creature.happy <= 0:
+                self.creature.death("Suicide."); break
+            if self.creature.energy <= 0:
                 self.creature.forceSleep()
+            elif self.creature.heal >= -40:
+                self.creature.vieillir()
             else:
-                print(f"{self.creature.name} ne vieillit pas car sa santé est trop faible.")
+                print(f"{self.creature.name} is too weak to age.")
+            if random.randint(1, 3) == 1:
+                self.event_manager.apply_random_event(self.creature) # 1 / 3 
             
-            self.event_manager.apply_random_event(self.creature)
+            choices = {
+                "1": lambda: self.action_manager.nourrir(self.creature),
+                "2": lambda: self.action_manager.jouer(self.creature),
+                "3": lambda: self.action_manager.dormir(self.creature),
+                "4": lambda: self.action_manager.soigner(self.creature),
+                "5": lambda: show_creature_ascii(self.creature),
+                "6": lambda: (self.storage.save(self.creature), print("Game saved. Goodbye!"), exit()),
+                "7": lambda: self.action_manager.givestats(self.creature),
+                "8": lambda: self.creature.say()  
+            }
             
-            print("\nActions disponibles :")
-            print("1. Nourrir")
-            print("2. Jouer")
-            print("3. Dormir")
-            print("4. Soigner")
-            print("5. Afficher la créature")
-            print("6. Sauvegarder et quitter")
-            
-            choix = input("Votre choix : ")
-            
-            if choix == "1":
-                self.action_manager.nourrir(self.creature)
-            elif choix == "2":
-                self.action_manager.jouer(self.creature)
-            elif choix == "3":
-                self.action_manager.dormir(self.creature)
-            elif choix == "4":
-                self.action_manager.soigner(self.creature)
-            elif choix == "5":
-                show_creature_ascii(self.creature)
-            elif choix == "6":
-                self.storage.save(self.creature)
-                print("Jeu sauvegardé. Au revoir !")
-                break
-            else:
-                print("Choix invalide. Réessayez.")
+            print("\n1. Feed  2. Play  3. Sleep  4. Heal  5. Show  6. Save & Quit 7. Edit Stats, 8. Say Sound")
+            choices.get(input("Your choice: "), lambda: print("Invalid choice. Try again."))()

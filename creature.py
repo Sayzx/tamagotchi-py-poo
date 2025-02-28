@@ -1,5 +1,8 @@
 import time
 import sys
+import os
+import pygame
+import threading
 class Creature:
     def __init__(self, name, type_creature):
         self.name = name
@@ -39,28 +42,46 @@ class Creature:
         print("────────────────────────")
         print("La créature dort...")
 
-        duration = 20  # Durée totale en secondes
-        steps = 20  # Nombre d'étapes pour afficher la progression
+        duration = 20 
+        steps = 20  
 
         for i in range(steps + 1):
             percent = int((i / steps) * 100)
-            bar = "█" * i + "-" * (steps - i)  # Barre de progression visuelle
+            bar = "█" * i + "-" * (steps - i)  
             sys.stdout.write(f"\r[{bar}] {percent}%")
             sys.stdout.flush()
-            time.sleep(duration / steps)  # Pause entre chaque mise à jour
+            time.sleep(duration / steps)
 
         print("\n+25 d'énergie\n-10 de faim")
 
 
 
 
-
-
 # Sous-classes pour les différents types de créatures
+
+
 class Chaton(Creature):
     def __init__(self, name):
         super().__init__(name, "chaton")
         self.happy += 10  
+
+    def say(self):
+        sound_path = os.path.join(os.path.dirname(__file__), "ui", "sound", "miow.mp3")
+
+        if not os.path.exists(sound_path):
+            print("⚠️ Fichier audio non trouvé :", sound_path)
+            return
+        
+        def play_sound():
+            pygame.init()
+            pygame.mixer.init()
+            pygame.mixer.music.load(sound_path)
+            pygame.mixer.music.set_volume(1.0)  
+            pygame.mixer.music.play()
+        
+        threading.Thread(target=play_sound, daemon=True).start()
+        time.sleep(2)
+        pygame.mixer.music.stop()
 
 class Chiot(Creature):
     def __init__(self, name):
