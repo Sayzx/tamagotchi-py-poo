@@ -15,6 +15,7 @@ Bienvenue dans le **Simulateur de Créature Virtuelle** ! 🎮 Ici, vous pourrez
   - Maladie 🤒
   - Rencontre avec d'autres créatures 🤝
   - Soirée 🎉
+  - etc..
 - **Vieillissement & évolution** 🕰️
 - **Sauvegarde & chargement des parties** 💾
 
@@ -29,6 +30,7 @@ Bienvenue dans le **Simulateur de Créature Virtuelle** ! 🎮 Ici, vous pourrez
 
 2. **Exécuter le jeu**
    ```bash
+   pip install pygame
    python main.py
    ```
 

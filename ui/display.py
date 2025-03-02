@@ -7,7 +7,7 @@ def get_ascii_art(filename):
         with open(filename, "r", encoding="utf-8") as f:
             return f.readlines()
     except FileNotFoundError:
-        return ["ASCII art non trouvé.\n"]
+        return ["ASCII not found.\n"]
 
 def animate_ascii(text_widget, frames, delay=200, index=0):
     text_widget.delete("1.0", tk.END)
@@ -17,9 +17,9 @@ def animate_ascii(text_widget, frames, delay=200, index=0):
 
 def show_creature_ascii(creature):
     filename = os.path.join(os.path.dirname(__file__), "art", f"{creature.type.lower()}.txt")
-    
+    print("Don't forget to close the window to return to the main menu")
     if not os.path.exists(filename): 
-        print(f"⚠️ Fichier non trouvé : {filename}")
+        print(f"⚠️ File not found: {filename}")
         return
     frames = [get_ascii_art(filename)]
     window = tk.Tk()

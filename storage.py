@@ -19,21 +19,21 @@ class Storage:
 
         with open(self.filepath, "w") as f:
             json.dump(data, f)
-        print("Sauvegarde effectuée.")
+        print("Game saved.")
 
     def load(self):
         if not os.path.exists(self.filepath):
-            print("Aucune sauvegarde trouvée.")
+            print("No save file found.")
             return None
 
         if os.path.getsize(self.filepath) == 0:
-            print("Le fichier de sauvegarde est vide.")
+            print("Save file is empty.")
             return None
 
         with open(self.filepath, "r") as f:
             try:
                 data = json.load(f)
             except json.JSONDecodeError:
-                print("Erreur lors du décodage du fichier de sauvegarde.")
+                print("Save file is corrupted.")
                 return None
         return data

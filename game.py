@@ -32,7 +32,7 @@ class Game:
             setattr(self.creature, attr, data[attr])
     
     def run(self):
-        """Main game loop."""
+        print("\033[H\033[J")
         print("\nWelcome to the Virtual Creature Simulator!\nTake care of your virtual pet.")
         if (saved_data := self.storage.load()) and input("Save found. Load it? (y/n): ").lower() == "y":
             self.load_creature(saved_data)

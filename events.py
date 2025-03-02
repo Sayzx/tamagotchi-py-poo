@@ -2,36 +2,36 @@ import random
 
 class EventManager:
     EVENTS = {
-        "maladie": {
-            "message": "Oh non ! Votre créature est tombée malade.(Santé -20)",
+        "sickness": {
+            "message": "Oh no! Your creature has fallen ill. (Health -20)",
             "effects": {"heal": -15},
             "random_choice": False
         },
         "meet": {
-            "message": ["Votre créature a rencontré une autre créature, cela a amélioré son bonheur.(+10 bonheur)",
-                        "La rencontre n'a pas été très bonne. Elle s'est embrouillée.(-5 bonheur)"],
+            "message": ["Your creature met another creature, which improved its happiness. (+10 happiness)",
+                        "The meeting didn't go well. They had a fight. (-5 happiness)"],
             "effects": [{"happy": 10}, {"happy": -5}],
             "random_choice": True
         },
         "date": {
-            "message": ["Votre créature a un rendez-vous romantique.\nLe rendez-vous a été un succès ! (+20 bonheur)",
-                        "Votre créature a un rendez-vous romantique.\nLe rendez-vous a échoué.(-10 bonheur)"],
+            "message": ["Your creature has a romantic date. The date was a success! (+20 happiness)",
+                        "Your creature has a romantic date. The date failed. (-10 happiness)"],
             "effects": [{"happy": 20}, {"happy": -10}],
             "random_choice": True
         },
         "party": {
-            "message": ["Votre créature est invitée à une soirée.\nLa soirée s'est bien passée.(+10 bonheur)",
-                        "Votre créature est invitée à une soirée.\nLa soirée a été un peu trop arrosée... (-10 bonheur, -10 santé)"],
+            "message": ["Your creature is invited to a party. The party went well. (+10 happiness)",
+                        "Your creature is invited to a party. The party was a bit too wild... (-10 happiness, -10 health)"],
             "effects": [{"happy": 10}, {"happy": -10, "heal": -10}],
             "random_choice": True
         },
         "rain": {
-            "message": "Il pleut, votre créature est tombée malade et a perdu du bonheur.(-10 bonheur, -10 santé)",
+            "message": "It's raining, your creature got sick and lost happiness. (-10 happiness, -10 health)",
             "effects": {"heal": -10, "happy": -10},
             "random_choice": False
         },
-        "rien": {
-            "message": "Rien ne se passe.",
+        "nothing": {
+            "message": "Nothing happens.",
             "effects": {},
             "random_choice": False
         },
@@ -44,7 +44,7 @@ class EventManager:
         if event_data["random_choice"]:
             index = random.choice([0, 1])
             print("────────────────────────")
-            print("[NOUVELLE ÉVÈNEMENT DETECTÉ]")
+            print("[NEW EVENT DETECTED]")
             print(event_data["message"][index])
             print("────────────────────────")
             for key, value in event_data["effects"][index].items():

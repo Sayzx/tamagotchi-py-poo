@@ -15,14 +15,25 @@ class Creature:
         self.lvl = 1
 
     def status(self):
-        return (f"{self.name} ({self.type})\n"
-                f"Faim: {self.hungry}/100\n"
-                f"Energie: {self.energy}/100\n"
-                f"Bonheur: {self.happy}/100\n"
-                f"Santé: {self.heal}/100\n"
-                f"Âge: {self.age}\n"
-                f"Niveau: {self.lvl}"
-                )
+        age_ranges = [(5, "Baby"), (13, "Enfant"), (18, "Ado"), (40, "Jeune")]
+        status_age = "Vieux"  # Valeur par défaut
+
+        for limit, label in age_ranges:
+            if self.age < limit:
+                status_age = label
+                break  # On sort dès qu'on trouve la bonne catégorie
+
+        return (
+            f"{self.name} ({self.type})\n"
+            f"Hungry: {self.hungry}/100\n"
+            f"Energy: {self.energy}/100\n"
+            f"Happy: {self.happy}/100\n"
+            f"Heal: {self.heal}/100\n"
+            f"Age: {self.age} ({status_age})\n"
+            f"Level: {self.lvl}"
+        )
+
+
 
     def vieillir(self):
         if self.heal >= -40:
@@ -30,17 +41,17 @@ class Creature:
             self.energy = max(0, self.energy - 2)
             self.heal = max(-100, self.heal - 1)
         else:
-            print(f"{self.name} ne vieillit pas car sa santé est trop faible.")
+            print(f"{self.name} does not age because its health is too low.")
     
     def death(self, cause):
-        print("──────────୨ৎCertificat de MORT୨ৎ──────────")
-        print(f"{self.name} est morte à l'âge de {self.age} ans.")
-        print("Cause du décès : ", cause)
+        print("──────────୨ৎDeath Certificate୨ৎ──────────")
+        print(f"{self.name} died at the age of {self.age} years.")
+        print("Death cause:", cause)
         print("────────────────────────")
 
     def forceSleep(self):
         print("────────────────────────")
-        print("La créature dort...")
+        print("Your creature is sleeping...")
 
         duration = 20 
         steps = 20  
@@ -52,61 +63,74 @@ class Creature:
             sys.stdout.flush()
             time.sleep(duration / steps)
 
-        print("\n+25 d'énergie\n-10 de faim")
+        print("\n+25 Energy | -10 Hungry")
 
 
 
 
 # Sous-classes pour les différents types de créatures
 
+def send_sound(nameaudio):
+    sound_path = os.path.join(os.path.dirname(__file__), "ui", "sound", nameaudio)
+
+    if not os.path.exists(sound_path):
+        print("⚠️ Fichier audio non trouvé :", sound_path)
+        return
+    
+    def play_sound():
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(sound_path)
+        pygame.mixer.music.set_volume(1.0)  
+        pygame.mixer.music.play()
+    
+    threading.Thread(target=play_sound, daemon=True).start()
+    time.sleep(2)
+    pygame.mixer.music.stop()
+
 
 class Chaton(Creature):
     def __init__(self, name):
         super().__init__(name, "chaton")
         self.happy += 10  
-
     def say(self):
-        sound_path = os.path.join(os.path.dirname(__file__), "ui", "sound", "miow.mp3")
-
-        if not os.path.exists(sound_path):
-            print("⚠️ Fichier audio non trouvé :", sound_path)
-            return
-        
-        def play_sound():
-            pygame.init()
-            pygame.mixer.init()
-            pygame.mixer.music.load(sound_path)
-            pygame.mixer.music.set_volume(1.0)  
-            pygame.mixer.music.play()
-        
-        threading.Thread(target=play_sound, daemon=True).start()
-        time.sleep(2)
-        pygame.mixer.music.stop()
+        send_sound("miow.mp3")
 
 class Chiot(Creature):
     def __init__(self, name):
         super().__init__(name, "chiot")
         self.energy += 10  
-
+    def say(self):
+        send_sound("woof.mp3")
+     
 class Dragon(Creature):
     def __init__(self, name):
         super().__init__(name, "dragon")
         self.heal += 20  
+    def say(self):
+        send_sound("grr.mp3")
+    
 
 class Poisson(Creature):
     def __init__(self, name):
         super().__init__(name, "poisson")
         self.energy -= 10  
+    def say(self):
+        print("The fish is silent.")
 
 class Rhino(Creature):
     def __init__(self, name):
         super().__init__(name, "rhino")
         self.heal += 30  
+    def say(self):
+        send_sound("roar.mp3")
 
 class Singe(Creature):
     def __init__(self, name):
         super().__init__(name, "singe")
         self.happy += 15
+    def say(self):
+        send_sound("monkey.mp3")
 
 # Fonction pour instancier la bonne créature
 def create_crature(name, type_creature):
