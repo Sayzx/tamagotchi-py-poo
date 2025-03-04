@@ -4,7 +4,13 @@ import time
 class ActionManager:
     def feed(self, creature):
         print("────────────────────────")
-        print("You feed your creature")
+        print("\033[92mYou feed your creature\033[0m")
+        for i in range(21):
+            time.sleep(0.2)
+            percent = i * 5
+            bar = "█" * i + "░" * (20 - i)
+            print(f"\r[{bar}] {percent}%", end="")
+        print("\n\033[92mFeeding complete.\033[0m")
         creature.hungry = min(100, creature.hungry + 20)
         if creature.hungry > 90:
             creature.heal = max(0, creature.heal - 5)
@@ -19,7 +25,7 @@ class ActionManager:
 
         choix = input("Your choice: ")
         while choix not in ["1", "2", "3"]:
-            print("Invalid choice. Try again.")
+            print("\033[91mInvalid choice. Try again.\033[0m")
             choix = input("Your choice: ")
 
         if choix == "1":
@@ -27,22 +33,27 @@ class ActionManager:
         elif choix == "2":
             self.memorygame(creature)
         else:
-            self.jeu_de_rapidite(creature)
+            self.fastgame(creature)
         print("────────────────────────")
 
     def mathgame(self, creature):
-        print("Vous jouez à un jeu de calcul.")
+        print("You play a math game.")
         score = 0
         for _ in range(3):
             a, b = random.randint(1, 10), random.randint(1, 10)
             op = random.choice(["+", "-", "*"])
             print(f"Calcul: {a} {op} {b} ?")
-            result = int(input("Answer: "))
+            while True:
+                try:
+                    result = int(input("Answer: "))
+                    break
+                except ValueError:
+                    print("\033[91mInvalid input. Please enter a number.\033[0m")
             correct = eval(f"{a} {op} {b}")
             if result == correct:
                 score += 1
         if score >= 2:
-            print("Nice ! You Win.\n +10 Happy \n +1 LvL")
+            print("Nice! You Win.\n +10 Happy \n +1 LvL")
             creature.happy = min(100, creature.happy + 10)
             creature.lvl += 1
         else:
@@ -54,15 +65,20 @@ class ActionManager:
         print("Memorize these numbers:")
         print(numbers)
         input("Press Enter to continue.")
-        print("\n" * 100) 
+        print("\n" * 100)
         print("Enter the numbers you remember.")
         for i, number in enumerate(numbers, 1):
-            user_number = int(input(f"Number {i} : "))
+            while True:
+                try:
+                    user_number = int(input(f"Number {i}: "))
+                    break
+                except ValueError:
+                    print("\033[91mInvalid input. Please enter a number.\033[0m")
             if user_number != number:
                 print("You lose.")
                 break
         else:
-            print("Well done ! You Win.\n +20 Happy \n +1 LvL")
+            print("Well done! You Win.\n +20 Happy \n +1 LvL")
             creature.happy = min(100, creature.happy + 20)
             creature.lvl += 1
 
@@ -73,12 +89,17 @@ class ActionManager:
         print(number)
         input("Press Enter to continue.")
         start = time.time()
-        print("\n" * 100) 
-        user_number = int(input("Enter the number: "))
+        print("\n" * 100)
+        while True:
+            try:
+                user_number = int(input("Enter the number: "))
+                break
+            except ValueError:
+                print("\033[91mInvalid input. Please enter a number.\033[0m")
         end = time.time()
         if user_number == number and end - start < 5:
             print("────────────────────────")
-            print("Well done ! You Win.\n +10 Happy \n +1 LvL")
+            print("Well done! You Win.\n +10 Happy \n +1 LvL")
             creature.happy = min(100, creature.happy + 10)
             creature.lvl += 1
         else:
@@ -99,18 +120,18 @@ class ActionManager:
 
     def heal(self, creature):
         print("────────────────────────")
-        print("You heal your creature.")
+        print("\033[92mYou heal your creature.\033[0m")
         if creature.energy < 50:
-            print("The creature is too weak to be healed.")
+            print("\033[91mThe creature is too weak to be healed.\033[0m")
         else:
             for i in range(21):
                 time.sleep(0.5)
                 percent = i * 5
                 bar = "█" * i + "░" * (20 - i)
-            print(f"\r[{bar}] {percent}%", end="")
-            print("The creature is healed.")
+                print(f"\r[{bar}] {percent}%", end="")
+            print("\n\033[92mThe creature is healed.\033[0m")
             creature.heal = min(100, creature.heal + 25)
-            print("────────────────────────")
+        print("────────────────────────")
         
     def check_value(self, creature, attribut):
         """Check if the value of the attribute is too high or too low."""
@@ -131,7 +152,7 @@ class ActionManager:
         attribut = input("Choose an attribute to modify (heal, hungry, energy, happy): ")
 
         while attribut not in valid_attributes:
-            print("Invalid attribute. Try again.")
+            print("\033[91mInvalid attribute. Try again.\033[0m")
             attribut = input("Choose an attribute to modify (heal, hungry, energy, happy): ")
 
         try:
@@ -139,5 +160,5 @@ class ActionManager:
             setattr(creature, attribut, new_value)
             self.check_value(creature, attribut)
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print("\033[91mInvalid input. Please enter a number.\033[0m")
         

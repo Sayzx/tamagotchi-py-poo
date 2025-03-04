@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 class Storage:
     def __init__(self, filepath="data/savegame.json"):
@@ -19,7 +20,8 @@ class Storage:
 
         with open(self.filepath, "w") as f:
             json.dump(data, f)
-        print("Game saved.")
+        save_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"\033[92mGame saved at {save_time}\033[0m")
 
     def load(self):
         if not os.path.exists(self.filepath):
