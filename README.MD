@@ -33,6 +33,14 @@ Bienvenue dans le **Simulateur de Créature Virtuelle** ! 🎮 Ici, vous pourrez
    pip install pygame
    python main.py
    ```
+3. **En cas de problème de dépendances**
+   ```bash
+   python3 -m venv .venv  
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   python main.py 
+
+   ```
 
 ---
 
