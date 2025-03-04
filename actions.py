@@ -2,7 +2,7 @@ import random
 import time
 
 class ActionManager:
-    def nourrir(self, creature):
+    def feed(self, creature):
         print("────────────────────────")
         print("You feed your creature")
         creature.hungry = min(100, creature.hungry + 20)
@@ -10,7 +10,7 @@ class ActionManager:
             creature.heal = max(0, creature.heal - 5)
         print("────────────────────────")
 
-    def jouer(self, creature):
+    def play(self, creature):
         print("────────────────────────")
         print("Choose a game to play with your creature:")
         print("1. Math game")
@@ -85,19 +85,29 @@ class ActionManager:
             print("You lose.")
             print("────────────────────────")
 
-    def dormir(self, creature):
+    def sleep(self, creature):
         print("────────────────────────")
         print("You put your creature to sleep.")
+        for i in range(21):
+            time.sleep(0.5)
+            percent = i * 5
+            bar = "█" * i + "░" * (20 - i)
+            print(f"\r[{bar}] {percent}%", end="")
+        print("\n────────────────────────")
         creature.energy = min(100, creature.energy + 30)
         creature.hungry = max(0, creature.hungry - 10)
-        print("────────────────────────")
 
-    def soigner(self, creature):
+    def heal(self, creature):
         print("────────────────────────")
         print("You heal your creature.")
         if creature.energy < 50:
             print("The creature is too weak to be healed.")
         else:
+            for i in range(21):
+                time.sleep(0.5)
+                percent = i * 5
+                bar = "█" * i + "░" * (20 - i)
+            print(f"\r[{bar}] {percent}%", end="")
             print("The creature is healed.")
             creature.heal = min(100, creature.heal + 25)
             print("────────────────────────")

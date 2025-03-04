@@ -59,15 +59,15 @@ class Game:
                 self.event_manager.apply_random_event(self.creature) # 1 / 3 
             
             choices = {
-                "1": lambda: self.action_manager.nourrir(self.creature),
-                "2": lambda: self.action_manager.jouer(self.creature),
-                "3": lambda: self.action_manager.dormir(self.creature),
-                "4": lambda: self.action_manager.soigner(self.creature),
+                "1": lambda: self.action_manager.feed(self.creature),
+                "2": lambda: self.action_manager.play(self.creature),
+                "3": lambda: self.action_manager.sleep(self.creature),
+                "4": lambda: self.action_manager.heal(self.creature),
                 "5": lambda: show_creature_ascii(self.creature),
                 "6": lambda: (self.storage.save(self.creature), print("Game saved. Goodbye!"), exit()),
                 "7": lambda: self.action_manager.givestats(self.creature),
                 "8": lambda: self.creature.say()  
             }
             
-            print("\n1. Feed  2. Play  3. Sleep  4. Heal  5. Show  6. Save & Quit 7. Edit Stats, 8. Say Sound")
+            print("\n1. feed  2. Play  3. Sleep  4. Heal  5. Show  6. Save & Quit 7. Edit Stats, 8. Say Sound")
             choices.get(input("Your choice: "), lambda: print("Invalid choice. Try again."))()

@@ -16,12 +16,12 @@ class Creature:
 
     def status(self):
         age_ranges = [(5, "Baby"), (13, "Enfant"), (18, "Ado"), (40, "Jeune")]
-        status_age = "Vieux"  # Valeur par défaut
+        status_age = "Vieux"  # Default Value
 
         for limit, label in age_ranges:
             if self.age < limit:
                 status_age = label
-                break  # On sort dès qu'on trouve la bonne catégorie
+                break  # Left the loop
 
         return (
             f"{self.name} ({self.type})\n"
@@ -68,7 +68,7 @@ class Creature:
 
 
 
-# Sous-classes pour les différents types de créatures
+# Subclasses for different types of creatures
 
 def send_sound(nameaudio):
     sound_path = os.path.join(os.path.dirname(__file__), "ui", "sound", nameaudio)
@@ -132,7 +132,7 @@ class Singe(Creature):
     def say(self):
         send_sound("monkey.mp3")
 
-# Fonction pour instancier la bonne créature
+# Factory function to create a creature
 def create_crature(name, type_creature):
     types = {
         "chaton": Chaton,
